@@ -32,6 +32,12 @@
             openssl.enable = false;
           };
         };
+
+        # The native mkShell options is still working there
+        # nativeBuildInputs = [];
+        # packages = [];
+        # shellHook = ''
+        # '';
       };
     });
   };

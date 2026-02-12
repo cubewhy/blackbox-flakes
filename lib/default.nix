@@ -15,8 +15,9 @@ in {
   mkShell = {
     pkgs,
     config,
-  }: let
-    # 1. Evaluate the modules (merge user config with our internal modules)
+    ...
+  } @ args: let
+    # Evaluate the modules (merge user config with our internal modules)
     eval = lib.evalModules {
       modules = [
         # Import the base system schema
@@ -30,16 +31,17 @@ in {
       specialArgs = {inherit pkgs lib;};
     };
 
-    # 2. Extract the final configuration
-    finalConfig = eval.config;
-  in
-    # 3. Generate the actual shell
-    pkgs.mkShell {
-      packages = finalConfig.blackbox.packages;
-      shellHook = finalConfig.blackbox.shellHook;
+    bbConfig = eval.config.blackbox;
 
-      # Automatically export environment variables defined in modules
-      # iterating over the attribute set
-    }
-    // finalConfig.blackbox.env;
+    userArgs = removeAttrs args ["pkgs" "config" "lib"];
+  in
+    pkgs.mkShell (
+      userArgs
+      // {
+        packages = bbConfig.packages ++ (userArgs.packages or []);
+        shellHook = bbConfig.shellHook + "\n" + (userArgs.shellHook or "");
+        nativeBuildInputs = (userArgs.nativeBuildInputs or []) ++ (bbConfig.nativeBuildInputs or []);
+      }
+      // bbConfig.env
+    );
 }
