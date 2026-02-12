@@ -1,15 +1,24 @@
 {lib}: let
-  supportedSystems = [
+  defaultSystems = [
     "x86_64-linux"
     "aarch64-linux"
     "x86_64-darwin"
     "aarch64-darwin"
   ];
 in {
-  eachSystem = nixpkgs: callback:
-    lib.genAttrs supportedSystems (
-      system:
-        callback nixpkgs.legacyPackages.${system}
+  eachSystem = {
+    nixpkgs,
+    systems ? defaultSystems,
+    overlays ? [],
+    config ? {allowUnfree = true;},
+  }: callback:
+    lib.genAttrs systems (
+      system: let
+        pkgs = import nixpkgs {
+          inherit system overlays config;
+        };
+      in
+        callback pkgs
     );
 
   mkShell = {

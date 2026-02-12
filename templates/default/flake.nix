@@ -1,44 +1,65 @@
 {
-  inputs.blackbox.url = "github:cubewhy/blackbox-flakes";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    blackbox.url = "github:cubewhy/blackbox-flakes";
+
+    # Do not forget to modify the `overlays` variable below after you added new overlays
+
+    # Uncomment if you need Rust
+    # rust-overlay.url = "github:oxalica/rust-overlay";
+  };
 
   outputs = {
     self,
     blackbox,
+    # rust-overlay,
     nixpkgs,
-  }: {
-    devShells = blackbox.lib.eachSystem nixpkgs (pkgs: {
-      default = blackbox.lib.mkShell {
-        inherit pkgs;
-        config = {
-          # Note: change the options there
-          # You can delete unused options
+    ...
+  }: let
+    overlays = [
+      # (import rust-overlay)
+    ];
+  in {
+    devShells =
+      blackbox.lib.eachSystem {
+        inherit nixpkgs overlays;
+      } (pkgs: {
+        default = blackbox.lib.mkShell {
+          inherit pkgs;
+          config = {
+            # Note: change the options there
+            # You can delete unused options
 
-          # Rust
-          blackbox.languages.rust = {
-            enable = false;
-            version = "stable"; # available values ["stable" "nightly"]
-            components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
-            targets = []; # any rust targets, like x86_64-pc-windows-gnu, leave blank to use platform default
+            # Rust
+            blackbox.languages.rust = {
+              enable = false;
+              version = "stable"; # available values ["stable" "beta" "nightly" "nightly-<date>"]
+              components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
+              # any rust targets, like x86_64-pc-windows-gnu, leave blank to use platform default
+              # the blackbox flake contains the Windows cross-compile workaround (pthreads).
+              # But please notice that you may still need to tackle with 3rd party libraries like
+              # openssl
+              targets = [
+                # "x86_64-pc-windows-gnu"
+              ];
+            };
+
+            # C/C++
+            blackbox.languages.c = {
+              enable = false;
+              compiler = "gcc"; # available values ["gcc" "clang"]
+            };
+
+            # Libraries
+            blackbox.libraries = {
+              openssl.enable = false;
+            };
           };
 
-          # C/C++
-          blackbox.languages.c = {
-            enable = false;
-            compiler = "gcc"; # available values ["gcc" "clang"]
-          };
-
-          # Libraries
-          blackbox.libraries = {
-            openssl.enable = false;
-          };
+          # mkShell builtin options are available
+          # shellHook = ''
+          # '';
         };
-
-        # The native mkShell options is still working there
-        # nativeBuildInputs = [];
-        # packages = [];
-        # shellHook = ''
-        # '';
-      };
-    });
+      });
   };
 }
