@@ -8,6 +8,8 @@ with lib; let
   cfg = config.blackbox.languages.rust;
 
   hasOverlay = builtins.hasAttr "rust-bin" pkgs;
+  # TODO: support another windows target (win7)
+  hasWindowsTarget = builtins.elem "x86_64-pc-windows-gnu" cfg.targets;
 
   toolchain =
     if hasOverlay
@@ -16,70 +18,74 @@ with lib; let
         extensions = cfg.components;
         targets = cfg.targets;
       }
-    else pkgs.rustc; # Fallback (targets won't work here)
+    else pkgs.rustc;
+
+  mingwPkgs = pkgs.pkgsCross.mingwW64;
+  mingwPthreads = mingwPkgs.windows.pthreads;
 in {
   options.blackbox.languages.rust = {
     enable = mkEnableOption "Rust development environment";
 
     version = mkOption {
-      type = types.listOf types.str;
+      type = types.str;
       default = "stable";
-      description = "Rust toolchain version (requires rust-overlay for advanced features)";
+      description = "Rust toolchain version";
     };
 
     targets = mkOption {
       type = types.listOf types.str;
       default = [];
-      example = ["wasm32-unknown-unknown" "x86_64-pc-windows-gnu"];
-      description = "List of cross-compilation targets to install (requires rust-overlay)";
+      example = ["x86_64-pc-windows-gnu"];
+      description = "List of cross-compilation targets";
     };
 
     components = mkOption {
       type = types.listOf types.str;
       default = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
-      example = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
-      description = "List of Rust components to install (requires rust-overlay)";
+      description = "Rust components";
     };
   };
 
-  config = mkIf cfg.enable {
-    # Base Packages
-    blackbox.packages =
-      [
-        # The Rust Toolchain (Compiler + Cargo)
-        (
-          if hasOverlay
-          then toolchain
-          else pkgs.cargo
-        )
+  config = mkIf cfg.enable (mkMerge [
+    {
+      blackbox.packages =
+        [
+          (
+            if hasOverlay
+            then toolchain
+            else pkgs.cargo
+          )
+          pkgs.gnumake
+        ]
+        ++ optionals (!hasOverlay) [
+          pkgs.rustc
+          pkgs.rust-analyzer
+          pkgs.rustfmt
+          pkgs.clippy
+        ];
 
-        # Build Tools
-        pkgs.gnumake
-      ]
-      # Add Standard Rust tools if no overlay (if overlay exists, they are in toolchain)
-      ++ optionals (!hasOverlay) [
-        pkgs.rustc
-        pkgs.rust-analyzer
-        pkgs.rustfmt
-        pkgs.clippy
-      ];
-
-    # Environment Variables
-    blackbox.env = mkMerge [
-      {
+      blackbox.env = {
         RUST_BACKTRACE = "1";
-        # If overlay is used, source path is managed by the toolchain wrapper usually,
-        # but we can fallback to the standard path if needed.
         RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
-      }
+      };
 
-      # OpenSSL Configuration
-    ];
+      blackbox.shellHook = mkIf (cfg.targets != [] && !hasOverlay) ''
+        echo "⚠️  WARNING: Targets requested ${toString cfg.targets}, but 'rust-overlay' is missing."
+      '';
+    }
 
-    # Warn user if they try to use targets without overlay
-    blackbox.shellHook = mkIf (cfg.targets != [] && !hasOverlay) ''
-      echo "⚠️  WARNING: You requested Rust targets ${toString cfg.targets}, but 'pkgs.rust-bin' was not found."
-      echo "   Please add 'oxalica/rust-overlay' to your flake inputs and apply it to pkgs."
-    '';
-  };
+    # Windows Cross-Compilation Configuration
+    (mkIf hasWindowsTarget {
+      blackbox.packages = [mingwPkgs.stdenv.cc];
+
+      blackbox.env = mkMerge [
+        {
+          CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER = "${mingwPkgs.stdenv.cc}/bin/x86_64-w64-mingw32-gcc";
+
+          CFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
+          CXXFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
+        }
+      ];
+    })
+  ]);
 }
