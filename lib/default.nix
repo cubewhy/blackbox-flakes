@@ -1,5 +1,17 @@
-{lib}: {
-  # The main function users will call in their flake
+{lib}: let
+  supportedSystems = [
+    "x86_64-linux"
+    "aarch64-linux"
+    "x86_64-darwin"
+    "aarch64-darwin"
+  ];
+in {
+  eachSystem = nixpkgs: callback:
+    lib.genAttrs supportedSystems (
+      system:
+        callback nixpkgs.legacyPackages.${system}
+    );
+
   mkShell = {
     pkgs,
     config,

@@ -6,31 +6,33 @@
     blackbox,
     nixpkgs,
   }: {
-    devShells.x86_64-linux.default = blackbox.lib.mkShell {
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      config = {
-        # Note: change the options there
-        # You can delete unused options
+    devShells = blackbox.lib.eachSystem nixpkgs (pkgs: {
+      default = blackbox.lib.mkShell {
+        inherit pkgs;
+        config = {
+          # Note: change the options there
+          # You can delete unused options
 
-        # Rust
-        blackbox.languages.rust = {
-          enable = false;
-          version = "stable"; # available values ["stable" "nightly"]
-          components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
-          targets = []; # any rust targets, like x86_64-pc-windows-gnu, leave blank to use platform default
-        };
+          # Rust
+          blackbox.languages.rust = {
+            enable = false;
+            version = "stable"; # available values ["stable" "nightly"]
+            components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
+            targets = []; # any rust targets, like x86_64-pc-windows-gnu, leave blank to use platform default
+          };
 
-        # C/C++
-        blackbox.languages.c = {
-          enable = false;
-          compiler = "gcc"; # available values ["gcc" "clang"]
-        };
+          # C/C++
+          blackbox.languages.c = {
+            enable = false;
+            compiler = "gcc"; # available values ["gcc" "clang"]
+          };
 
-        # Libraries
-        blackbox.libraries = {
-          openssl.enable = false;
+          # Libraries
+          blackbox.libraries = {
+            openssl.enable = false;
+          };
         };
       };
-    };
+    });
   };
 }
