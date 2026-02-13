@@ -70,6 +70,7 @@
             blackbox.languages.javascript = {
               enable = false;
               #: Node.js package to use
+              #: Note: use nodejs-slim if you don't need npm
               package = pkgs.nodejs;
               #: manager: available values ["npm" "pnpm" "yarn"]
               manager = "npm";
