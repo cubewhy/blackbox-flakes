@@ -82,6 +82,10 @@
               manager = "npm";
               #: Auto run `npm install` (or with other package managers) if package.json exist
               autoInstall = true;
+              # cwd to run `npm install`
+              autoInstallDirs = [
+                "."
+              ];
             };
             #: }}}
 

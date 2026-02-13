@@ -14,6 +14,19 @@ with lib; let
     }.${
       cfg.manager
     };
+
+  mkInstallScript = path: ''
+    (
+      if [ -d "${path}" ]; then
+        cd "${path}"
+        if [ -f "package.json" ] && [ ! -d "node_modules" ]; then
+          echo "[blackbox] 'node_modules' missing in ${path}."
+          echo "[blackbox] Running: ${installCmd}..."
+          ${installCmd}
+        fi
+      fi
+    )
+  '';
 in {
   options.blackbox.languages.javascript = {
     enable = mkEnableOption "JavaScript / Node.js environment";
@@ -31,6 +44,13 @@ in {
       description = "Package manager to use";
     };
 
+    autoInstallDirs = mkOption {
+      type = types.listOf types.str;
+      default = ["."];
+      example = ["." "./dashboard" "./api"];
+      description = "List of directories to check for package.json and install dependencies.";
+    };
+
     autoInstall = mkOption {
       type = types.bool;
       default = false;
@@ -42,9 +62,7 @@ in {
 
   config = mkIf cfg.enable {
     blackbox.packages =
-      [
-        cfg.package
-      ]
+      [cfg.package]
       ++ optionals (cfg.manager == "yarn") [pkgs.yarn]
       ++ optionals (cfg.manager == "pnpm") [pkgs.pnpm];
 
@@ -52,14 +70,8 @@ in {
       PATH = "$PWD/node_modules/.bin:$PATH";
     };
 
-    blackbox.shellHook = mkIf cfg.autoInstall ''
-      if [ -f "package.json" ]; then
-        if [ ! -d "node_modules" ]; then
-          echo "[blackbox] 'node_modules' missing."
-          echo "[blackbox] Running: ${installCmd}..."
-          ${installCmd}
-        fi
-      fi
-    '';
+    blackbox.shellHook = mkIf cfg.autoInstall (
+      concatStringsSep "\n" (map mkInstallScript cfg.autoInstallDirs)
+    );
   };
 }
