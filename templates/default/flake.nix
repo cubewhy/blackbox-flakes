@@ -87,6 +87,15 @@
               #: }}}
             };
             #: }}}
+
+            #: Tools {{{
+            blackbox.tools.pre-commit = {
+              enable = false;
+              #: Force run `pre-commit install` when enter shell
+              #: This is not recommended, please don't enable it.
+              runOnStart = false;
+            };
+            #: }}}
           };
           #: }}}
 

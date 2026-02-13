@@ -8,5 +8,8 @@
     # Libraries
     ./libraries/openssl.nix
     ./libraries/cuda.nix
+
+    # Tools
+    ./tools/pre-commit.nix
   ];
 }
