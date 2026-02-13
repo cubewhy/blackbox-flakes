@@ -100,7 +100,7 @@
             blackbox.languages.go = {
               enable = false;
               version = "latest";
-              #: gopls, delve, golangci-lint, gotools
+              #: enabled installTools option to install gopls, delve, golangci-lint, gotools
               installTools = false;
             };
             #: }}}
