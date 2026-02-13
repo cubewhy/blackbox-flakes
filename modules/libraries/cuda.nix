@@ -17,63 +17,52 @@ in {
       default = "12";
       description = "CUDA Major version (e.g., '11', '12', '13'). Maps to pkgs.cudaPackages_<version>";
     };
-
-    withDrivers = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Include nvidia_x11 drivers in LD_LIBRARY_PATH (Warning: can cause version mismatch on non-NixOS)";
-    };
   };
 
   config = mkIf cfg.enable {
-    blackbox.packages = with pkgs;
-      [
-        git
-        gitRepo
-        gnupg
-        autoconf
-        curl
-        procps
-        gnumake
-        util-linux
-        m4
-        gperf
-        unzip
+    blackbox.packages = with pkgs; [
+      git
+      gitRepo
+      gnupg
+      autoconf
+      curl
+      procps
+      gnumake
+      util-linux
+      m4
+      gperf
+      unzip
 
-        cudaPkg.cudatoolkit
+      cudaPkg.cudatoolkit
 
-        libGLU
-        libGL
-        freeglut
-        libXi
-        libXmu
-        libXext
-        libX11
-        libXv
-        libXrandr
+      libGLU
+      libGL
+      freeglut
+      libXi
+      libXmu
+      libXext
+      libX11
+      libXv
+      libXrandr
 
-        zlib
-        ncurses5
-        stdenv.cc
-        binutils
-      ]
-      ++ optionals cfg.withDrivers [
-        linuxPkgs.nvidia_x11
-      ];
+      zlib
+      ncurses5
+      stdenv.cc
+      binutils
+    ];
 
     blackbox.env = {
       CUDA_PATH = "${cudaPkg.cudatoolkit}";
 
-      EXTRA_LDFLAGS = "-L/lib -L${linuxPkgs.nvidia_x11}/lib";
+      EXTRA_LDFLAGS = "-L/lib -L/run/opengl-driver/lib";
       EXTRA_CCFLAGS = "-I/usr/include";
     };
 
     blackbox.shellHook = ''
-      export LD_LIBRARY_PATH="${makeLibraryPath [
-        linuxPkgs.nvidia_x11
+      export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib:${makeLibraryPath [
         pkgs.ncurses5
         pkgs.stdenv.cc.cc.lib
-      ]}:/run/opengl-driver/lib:$LD_LIBRARY_PATH"
+      ]}:$LD_LIBRARY_PATH"
 
       if command -v nvcc > /dev/null; then
         nvcc --version | grep release

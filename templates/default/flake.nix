@@ -120,8 +120,6 @@
                 enable = false;
                 #: version: e.g.  [11, 12, 13]
                 version = "13";
-                #: Enable this to install nvidia_x11 package
-                withDrivers = true;
               };
               #: }}}
             };
