@@ -4,6 +4,8 @@ The black box devShell flake
 
 ## Usage
 
+Short version:
+
 ```shell
 nix flake init -t github:cubewhy/blackbox-flakes
 ```
@@ -12,7 +14,7 @@ And you will notice the options in flake.nix
 
 Just simply edit them and have fun.
 
-If something is undocumented in the template, please open a pr to let me know.
+If something is undocumented in the template, please open an issue/pr to let me know.
 
 ## Documentation
 
