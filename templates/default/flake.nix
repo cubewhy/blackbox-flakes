@@ -72,12 +72,18 @@
             blackbox.languages.python = {
               enable = false;
               #: The python package to use
-              package = pkgs.python;
+              package = pkgs.python3;
               #: The project dir
               directory = ".";
               #: The venv manager
-              #: manager: available values ["venv" "uv"]
-              manager = "venv";
+              #: manager: available values ["pip" "uv" "poetry"]
+              manager = "pip";
+              #: This is samiliar to the npm thing, run install command on enter env
+              #: If using pip -> `pip install -r requirements.txt`
+              #: If using uv -> `uv sync` or the pip compat command `uv pip install -r`
+              #: If using poetry -> `poetry install`
+              #: The behavior depends on the manager option.
+              autoInstall = false;
             };
             #: python end }}}
 

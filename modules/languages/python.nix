@@ -8,13 +8,7 @@ with lib; let
   cfg = config.blackbox.languages.python;
 
   venvName = ".venv";
-
   venvPath = "${cfg.directory}/${venvName}";
-
-  createCmd =
-    if cfg.manager == "uv"
-    then "uv venv ${venvPath} --python ${cfg.package}/bin/python"
-    else "${cfg.package}/bin/python -m venv ${venvPath}";
 in {
   options.blackbox.languages.python = {
     enable = mkEnableOption "Python development environment";
@@ -32,20 +26,23 @@ in {
     };
 
     manager = mkOption {
-      type = types.enum ["venv" "uv"];
-      default = "uv";
-      description = "Tool to create the virtual environment.";
+      type = types.enum ["pip" "uv" "poetry"];
+      default = "pip";
+      description = "Package manager to use. 'pip' uses requirements.txt, 'uv' uses uv.lock, 'poetry' uses poetry.lock.";
+    };
+
+    autoInstall = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Automatically install dependencies (pip install / uv sync / poetry install) on shell entry.";
     };
   };
 
   config = mkIf cfg.enable {
     blackbox.packages =
-      [
-        cfg.package
-      ]
-      ++ optionals (cfg.manager == "uv") [
-        pkgs.uv
-      ];
+      [cfg.package]
+      ++ optionals (cfg.manager == "uv") [pkgs.uv]
+      ++ optionals (cfg.manager == "poetry") [pkgs.poetry];
 
     blackbox.env = {
       LD_LIBRARY_PATH = "${lib.makeLibraryPath [
@@ -57,32 +54,74 @@ in {
       PYTHONUNBUFFERED = "1";
 
       VIRTUAL_ENV = "$PWD/${venvPath}";
+
+      POETRY_VIRTUALENVS_IN_PROJECT = "true";
+      POETRY_VIRTUALENVS_PATH = "$PWD/${projectRoot}";
     };
 
     blackbox.shellHook = ''
-      if [ ! -d "${cfg.directory}" ]; then
-         mkdir -p "${cfg.directory}"
-      fi
+      mkdir -p "${projectRoot}"
 
       if [ -d .git ]; then
         exclude_file=".git/info/exclude"
         mkdir -p .git/info
         if ! grep -qF "${venvPath}/" "$exclude_file"; then
            echo "${venvPath}/" >> "$exclude_file"
-           echo "[blackbox] Added '${venvPath}/' to .git/info/exclude"
         fi
       fi
 
-      # Create Venv if missing
-      if [ ! -d "${venvPath}" ]; then
-        echo "[blackbox] Creating virtual environment in '${venvPath}' via ${cfg.manager}..."
-        ${createCmd}
-      fi
+      case "${cfg.manager}" in
+        "pip")
+          if [ ! -d "${venvPath}" ]; then
+            echo "[blackbox] Creating venv (pip)..."
+            (cd "${projectRoot}" && ${cfg.package}/bin/python -m venv ".venv")
+          fi
 
-      # Activate Venv
-      if [ -f "${venvPath}/bin/activate" ]; then
-         source "${venvPath}/bin/activate"
-      fi
+          source "$PWD/${venvPath}/bin/activate"
+
+          ${optionalString cfg.autoInstall ''
+        if [ -f "${projectRoot}/requirements.txt" ]; then
+          echo "[blackbox] Found requirements.txt, running pip install..."
+          (cd "${projectRoot}" && pip install -r requirements.txt)
+        fi
+      ''}
+          ;;
+
+        "uv")
+          if [ ! -d "${venvPath}" ]; then
+            echo "[blackbox] Creating venv (uv)..."
+            (cd "${projectRoot}" && uv venv .venv --python "${cfg.package}/bin/python")
+          fi
+
+          source "$PWD/${venvPath}/bin/activate"
+
+          ${optionalString cfg.autoInstall ''
+        if [ -f "${projectRoot}/uv.lock" ] || [ -f "${projectRoot}/pyproject.toml" ]; then
+          echo "[blackbox] Found project config, running 'uv sync'..."
+          (cd "${projectRoot}" && uv sync)
+        elif [ -f "${projectRoot}/requirements.txt" ]; then
+          echo "[blackbox] Found requirements.txt, running 'uv pip install'..."
+          (cd "${projectRoot}" && uv pip install -r requirements.txt)
+        fi
+      ''}
+          ;;
+
+        "poetry")
+          ${optionalString cfg.autoInstall ''
+        if [ -f "${projectRoot}/poetry.lock" ] || [ -f "${projectRoot}/pyproject.toml" ]; then
+          echo "[blackbox] Running poetry install..."
+          (cd "${projectRoot}" && poetry install)
+        fi
+      ''}
+
+          if [ ! -d "${venvPath}" ]; then
+             echo "[blackbox] Initializing poetry env..."
+             (cd "${projectRoot}" && poetry env use "${cfg.package}/bin/python")
+          fi
+
+          source "$PWD/${venvPath}/bin/activate"
+          ;;
+      esac
     '';
   };
 }
