@@ -20,7 +20,7 @@ with lib; let
 
   effectiveTargets = cfg.targets ++ tomlTargets;
 
-  hasWindowsTarget = builtins.any (t: t == "x86_64-pc-windows-gnu") effectiveTargets;
+  hasWindowsTarget = builtins.any (t: (builtins.match ".*windows.*" t) != null) effectiveTargets;
 
   toolchain =
     if hasOverlay
