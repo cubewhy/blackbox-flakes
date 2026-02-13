@@ -9,6 +9,7 @@ with lib; let
 
   venvName = ".venv";
   venvPath = "${cfg.directory}/${venvName}";
+  projectRoot = cfg.directory;
 in {
   options.blackbox.languages.python = {
     enable = mkEnableOption "Python development environment";
