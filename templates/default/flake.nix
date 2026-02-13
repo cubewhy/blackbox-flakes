@@ -35,6 +35,7 @@
             #: Note: change the options there
             #: You can delete unused options
 
+            #: Languages {{{
             #: Rust {{{
             blackbox.languages.rust = {
               enable = false;
@@ -60,7 +61,7 @@
             #: }}}
 
             #: Javascript/Typescript {{{
-            #: tags: javascript, typescript, nodejs, npm, pnpm, yarn
+            #: tags: javascript, typescript, js, ts, nodejs, npm, pnpm, yarn
             blackbox.languages.javascript = {
               enable = true;
               #: Node.js package to use
@@ -70,6 +71,25 @@
               #: Auto run `npm install` (or with other package managers) if package.json exist
               autoInstall = true;
             };
+            #: }}}
+
+            #: Java {{{
+            blackbox.languages.java = {
+              enable = false;
+              package = pkgs.jdk;
+
+              #: Java build tools
+              maven = {
+                enable = false;
+                package = pkgs.maven;
+              };
+
+              gradle = {
+                enable = false;
+                package = pkgs.gradle;
+              };
+            };
+            #:}}}
             #: }}}
 
             #: Libraries {{{
