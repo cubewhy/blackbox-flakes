@@ -7,7 +7,6 @@
 with lib; let
   cfg = config.blackbox.libraries.cuda;
   cudaPkg = pkgs."cudaPackages_${cfg.version}";
-  linuxPkgs = pkgs.linuxPackages or pkgs.linuxPackages_latest;
 in {
   options.blackbox.libraries.cuda = {
     enable = mkEnableOption "CUDA development environment";
