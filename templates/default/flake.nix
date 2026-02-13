@@ -57,6 +57,18 @@
             };
             #: }}}
 
+            #: Javascript/Typescript {{{
+            blackbox.languages.javascript = {
+              enable = true;
+              #: Node.js package to use
+              package = pkgs.nodejs;
+              #: manager: available values ["npm" "pnpm" "yarn"]
+              manager = "npm";
+              #: Auto run `npm install` (or with other package managers) if package.json exist
+              autoInstall = true;
+            };
+            #: }}}
+
             #: Libraries {{{
             blackbox.libraries = {
               #: OpenSSL {{{
