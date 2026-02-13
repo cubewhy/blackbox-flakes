@@ -8,23 +8,49 @@ with lib; let
   cfg = config.blackbox.languages.rust;
 
   hasOverlay = builtins.hasAttr "rust-bin" pkgs;
-  # TODO: support another windows target (win7)
-  hasWindowsTarget = builtins.elem "x86_64-pc-windows-gnu" cfg.targets;
+
+  tomlTargets =
+    if cfg.toolchainFile != null && builtins.pathExists cfg.toolchainFile
+    then let
+      toml = builtins.fromTOML (builtins.readFile cfg.toolchainFile);
+    in
+      # Handle [toolchain] table format
+      toml.toolchain.targets or []
+    else [];
+
+  effectiveTargets = cfg.targets ++ tomlTargets;
+
+  hasWindowsTarget = builtins.any (t: t == "x86_64-pc-windows-gnu") effectiveTargets;
 
   toolchain =
     if hasOverlay
     then
-      pkgs.rust-bin.${cfg.version}.latest.default.override {
-        extensions = cfg.components;
-        targets = cfg.targets;
-      }
-    else pkgs.rustc;
+      if cfg.toolchainFile != null
+      then
+        # Use rust-toolchain.toml
+        pkgs.rust-bin.fromRustupToolchainFile cfg.toolchainFile
+      else
+        # Use explicit config options
+        pkgs.rust-bin.${cfg.version}.latest.default.override {
+          extensions = cfg.components;
+          targets = cfg.targets;
+        }
+    else
+      # Fallback: System Rust
+      pkgs.rustc;
 
   mingwPkgs = pkgs.pkgsCross.mingwW64;
   mingwPthreads = mingwPkgs.windows.pthreads;
 in {
   options.blackbox.languages.rust = {
     enable = mkEnableOption "Rust development environment";
+
+    toolchainFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      example = ./rust-toolchain.toml;
+      description = "Path to rust-toolchain.toml. Overrides 'version', 'targets' (for installation), and 'components'.";
+    };
 
     version = mkOption {
       type = types.str;
@@ -69,8 +95,8 @@ in {
         RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
       };
 
-      blackbox.shellHook = mkIf (cfg.targets != [] && !hasOverlay) ''
-        echo "⚠️ [blackbox] Targets requested ${toString cfg.targets}, but 'rust-overlay' is missing."
+      blackbox.shellHook = mkIf ((cfg.targets != [] || cfg.toolchainFile != null) && !hasOverlay) ''
+        echo "⚠️ [blackbox] Overlay 'rust-overlay' is missing."
         echo "⚠️ [blackbox] Please uncomment the overlay configuration in flake.nix to fix this."
       '';
     }
