@@ -20,6 +20,19 @@ If something is undocumented in the template, please open an issue/pr to let me 
 
 Please see the comments in the [default template](./templates/default/flake.nix)
 
+## Supported languages/libraries/tools
+
+| Type     | Name                  | Notes                                      |
+| -------- | --------------------- | ------------------------------------------ |
+| Language | Rust                  | need rust-overlay                          |
+| Language | C/C++                 |                                            |
+| Language | Golang                | need go-overlay                            |
+| Language | Java                  |                                            |
+| Language | Javascript/Typescript |                                            |
+| Library  | openssl               |                                            |
+| Library  | cuda                  | need systemwide nvidia driver installation |
+| Tool     | pre-commit            |                                            |
+
 ## Why this exist
 
 I find devenv heavy, sometimes even slower than pure Flakes.
