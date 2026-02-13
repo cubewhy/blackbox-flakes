@@ -2,6 +2,7 @@
 #: Tip: If you are using (n)vim, you can press zM to fold all the config blocks quickly (za to fold under cursor)
 #: Tip: search keywords to start quickly
 {
+  #: Inputs {{{
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     blackbox.url = "github:cubewhy/blackbox-flakes";
@@ -14,6 +15,7 @@
     #: Uncomment if you need Golang
     # go-overlay.url = "github:purpleclay/nix-go";
   };
+  #: inputs end }}}
 
   outputs = {
     self,
@@ -23,10 +25,12 @@
     nixpkgs,
     ...
   }: let
+    #: Overlays {{{
     overlays = [
       # (import rust-overlay)
       # (import go-overlay)
     ];
+    #: overlays end }}}
   in {
     devShells =
       blackbox.lib.eachSystem {
@@ -41,6 +45,7 @@
             #: You can delete unused options
 
             #: Languages {{{
+
             #: Rust {{{
             blackbox.languages.rust = {
               enable = false;
@@ -61,7 +66,7 @@
                 # "x86_64-pc-windows-gnu"
               ];
             };
-            #: }}}
+            #: rust end }}}
 
             #: C/C++ {{{
             blackbox.languages.c = {
@@ -94,7 +99,7 @@
                 "."
               ];
             };
-            #: }}}
+            #: javascript end }}}
 
             #: Java {{{
             blackbox.languages.java = {
@@ -112,7 +117,7 @@
                 package = pkgs.gradle;
               };
             };
-            #: }}}
+            #: java end }}}
 
             #: Golang {{{
             blackbox.languages.go = {
@@ -121,15 +126,15 @@
               #: enabled installTools option to install gopls, delve, golangci-lint, gotools
               installTools = false;
             };
-            #: }}}
+            #: golang end }}}
 
-            #: }}}
+            #: languages end }}}
 
             #: Libraries {{{
             blackbox.libraries = {
               #: OpenSSL {{{
               openssl.enable = false;
-              #: }}}
+              #: openssl end }}}
 
               #: Cuda: {{{
               #: See https://nixos-cuda.org/ for enabling nix cuda cache
@@ -138,24 +143,32 @@
                 #: version: e.g.  [11, 12, 13]
                 version = "13";
               };
-              #: }}}
+              #: cuda end }}}
             };
-            #: }}}
+            #: libraries end }}}
 
             #: Tools {{{
-            blackbox.tools.pre-commit = {
-              enable = false;
-              #: Force run `pre-commit install` when enter shell
-              #: This is not recommended, please don't enable it.
-              runOnStart = false;
+            blackbox.tools = {
+              #: Pre-commit {{{
+              pre-commit = {
+                enable = false;
+                #: Force run `pre-commit install` when enter shell
+                #: This is not recommended, please don't enable it.
+                runOnStart = false;
+              };
+              #: pre-commit end }}}
             };
-            #: }}}
+            #: tools end }}}
           };
-          #: }}}
+          #: config end }}}
+
+          #: Custom options {{{
 
           #: mkShell builtin options are available
           # shellHook = ''
           # '';
+
+          #: custom options end }}}
         };
       });
   };
