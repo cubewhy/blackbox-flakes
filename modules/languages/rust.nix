@@ -70,8 +70,8 @@ in {
       };
 
       blackbox.shellHook = mkIf (cfg.targets != [] && !hasOverlay) ''
-        echo "⚠️  WARNING: Targets requested ${toString cfg.targets}, but 'rust-overlay' is missing."
-        echo "⚠️  Please uncomment the overlay configuration in flake.nix to fix this."
+        echo "⚠️ [blackbox] Targets requested ${toString cfg.targets}, but 'rust-overlay' is missing."
+        echo "⚠️ [blackbox] Please uncomment the overlay configuration in flake.nix to fix this."
       '';
     }
 
