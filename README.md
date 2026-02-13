@@ -29,6 +29,7 @@ Please see the comments in the [default template](./templates/default/flake.nix)
 | Language | Golang                | need go-overlay                            |
 | Language | Java                  |                                            |
 | Language | Javascript/Typescript |                                            |
+| Language | Python                |                                            |
 | Library  | openssl               |                                            |
 | Library  | cuda                  | need systemwide nvidia driver installation |
 | Tool     | pre-commit            |                                            |
