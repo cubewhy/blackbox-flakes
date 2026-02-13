@@ -1,3 +1,5 @@
+# vim:fileencoding=utf-8:foldmethod=marker
+# Tip: If you are using (n)vim, you can press zM to fold all the config blocks quickly (za to fold under cursor)
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -26,11 +28,12 @@
       } (pkgs: {
         default = blackbox.lib.mkShell {
           inherit pkgs;
+          #: Config {{{
           config = {
             # Note: change the options there
             # You can delete unused options
 
-            # Rust
+            #: Rust {{{
             blackbox.languages.rust = {
               enable = false;
               version = "stable"; # available values ["stable" "beta" "nightly" "nightly-<date>"]
@@ -43,18 +46,22 @@
                 # "x86_64-pc-windows-gnu"
               ];
             };
+            #: }}}
 
-            # C/C++
+            #: C/C++ {{{
             blackbox.languages.c = {
               enable = false;
               compiler = "gcc"; # available values ["gcc" "clang"]
             };
+            #: }}}
 
-            # Libraries
+            #: Libraries {{{
             blackbox.libraries = {
               openssl.enable = false;
             };
+            #: }}}
           };
+          #: }}}
 
           # mkShell builtin options are available
           # shellHook = ''
