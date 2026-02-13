@@ -74,7 +74,7 @@
               #: compiler: available values ["gcc" "clang"]
               compiler = "gcc";
             };
-            #: }}}
+            #: c/cpp end }}}
 
             #: Javascript/Typescript {{{
             #: tags: javascript, typescript, js, ts, nodejs, npm, pnpm, yarn
