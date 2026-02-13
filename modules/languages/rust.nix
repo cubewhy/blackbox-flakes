@@ -31,7 +31,7 @@ with lib; let
         pkgs.rust-bin.fromRustupToolchainFile cfg.toolchainFile
       else
         # Use explicit config options
-        pkgs.rust-bin.${cfg.version}.latest.default.override {
+        pkgs.rust-bin.${cfg.channel}.latest.default.override {
           extensions = cfg.components;
           targets = cfg.targets;
         }
@@ -49,13 +49,13 @@ in {
       type = types.nullOr types.path;
       default = null;
       example = ./rust-toolchain.toml;
-      description = "Path to rust-toolchain.toml. Overrides 'version', 'targets' (for installation), and 'components'.";
+      description = "Path to rust-toolchain.toml. Overrides 'channel', 'targets' (for installation), and 'components'.";
     };
 
-    version = mkOption {
+    channel = mkOption {
       type = types.str;
       default = "stable";
-      description = "Rust toolchain version";
+      description = "Rust toolchain channel";
     };
 
     targets = mkOption {

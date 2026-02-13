@@ -55,8 +55,8 @@
               #: and comment other rust related options (expect `languages.rust.enable`)
               toolchainFile = null;
 
-              #: version: available values ["stable" "beta" "nightly" "nightly-<date>"]
-              version = "stable";
+              #: channel: available values ["stable" "beta" "nightly" "nightly-<date>"]
+              channel = "stable";
               components = ["rustc" "cargo" "clippy" "rustfmt" "rust-analyzer"];
               #: any rust targets, like x86_64-pc-windows-gnu, leave blank to use platform default
               #: the blackbox flake contains the Windows cross-compile workaround (pthreads).
