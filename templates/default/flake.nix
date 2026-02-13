@@ -89,7 +89,7 @@
                 package = pkgs.gradle;
               };
             };
-            #:}}}
+            #: }}}
             #: }}}
 
             #: Libraries {{{
