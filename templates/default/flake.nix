@@ -1,5 +1,6 @@
 # vim:fileencoding=utf-8:foldmethod=marker
 #: Tip: If you are using (n)vim, you can press zM to fold all the config blocks quickly (za to fold under cursor)
+#: Tip: search keywords to start quickly
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -28,6 +29,7 @@
       } (pkgs: {
         default = blackbox.lib.mkShell {
           inherit pkgs;
+
           #: Config {{{
           config = {
             #: Note: change the options there
@@ -58,6 +60,7 @@
             #: }}}
 
             #: Javascript/Typescript {{{
+            #: tags: javascript, typescript, nodejs, npm, pnpm, yarn
             blackbox.languages.javascript = {
               enable = true;
               #: Node.js package to use
