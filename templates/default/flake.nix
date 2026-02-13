@@ -77,8 +77,15 @@
               enable = false;
               #: Node.js package to use
               #: Note: use nodejs-slim if you don't need npm
-              package = pkgs.nodejs;
-              #: manager: available values ["npm" "pnpm" "yarn"]
+              package = {
+                nodejs = pkgs.nodejs;
+                pnpm = pkgs.pnpm;
+                yarn = pkgs.yarn;
+                bun = pkgs.bun;
+                deno = pkgs.deno;
+              };
+              #: manager: available values ["npm" "pnpm" "yarn" "bun" "deno"]
+              #: If this set to bun or deno, nodejs will not be installed
               manager = "npm";
               #: Auto run `npm install` (or with other package managers) if package.json exist
               autoInstall = true;
