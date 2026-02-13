@@ -67,7 +67,7 @@ in {
       if command -v nvcc > /dev/null; then
         nvcc --version | grep release
       else
-        echo "⚠️  nvcc not found in PATH!"
+        echo "⚠️ nvcc not found in PATH!"
       fi
     '';
   };
