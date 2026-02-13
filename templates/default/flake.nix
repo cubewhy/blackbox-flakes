@@ -44,10 +44,10 @@
             #: Rust {{{
             blackbox.languages.rust = {
               enable = false;
-              # If your project has rust-toolchain.toml file
-              # Please modify this option with
-              # ./rust-toolchain.toml
-              # and comment other rust related options (expect `languages.rust.enable`)
+              #: If your project has rust-toolchain.toml file
+              #: Please modify this option with
+              #: ./rust-toolchain.toml
+              #: and comment other rust related options (expect `languages.rust.enable`)
               toolchainFile = null;
 
               #: version: available values ["stable" "beta" "nightly" "nightly-<date>"]
