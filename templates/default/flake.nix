@@ -94,7 +94,9 @@
               manager = "npm";
               #: Auto run `npm install` (or with other package managers) if package.json exist
               autoInstall = true;
-              # cwd to run `npm install`
+              #: cwd to run `npm install`
+              #: You may confused with the type str[] of the option
+              #: In nix, you cannot pass . (current dir) to the path type, so string is a workaround for this.
               autoInstallDirs = [
                 "."
               ];
