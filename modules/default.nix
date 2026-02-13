@@ -6,6 +6,7 @@
     ./languages/javascript.nix
     ./languages/java.nix
     ./languages/go.nix
+    ./languages/python.nix
 
     # Libraries
     ./libraries/openssl.nix

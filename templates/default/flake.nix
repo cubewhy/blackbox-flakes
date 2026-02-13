@@ -68,6 +68,19 @@
             };
             #: rust end }}}
 
+            #: Python {{{
+            blackbox.languages.python = {
+              enable = false;
+              #: The python package to use
+              package = pkgs.python;
+              #: The project dir
+              directory = ".";
+              #: The venv manager
+              #: manager: available values ["venv" "uv"]
+              manager = "venv";
+            };
+            #: python end }}}
+
             #: C/C++ {{{
             blackbox.languages.c = {
               enable = false;
