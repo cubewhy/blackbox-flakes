@@ -10,17 +10,22 @@
 
     #: Uncomment if you need Rust
     # rust-overlay.url = "github:oxalica/rust-overlay";
+
+    #: Uncomment if you need Golang
+    # go-overlay.url = "github:purpleclay/nix-go";
   };
 
   outputs = {
     self,
     blackbox,
     # rust-overlay,
+    # go-overlay,
     nixpkgs,
     ...
   }: let
     overlays = [
       # (import rust-overlay)
+      # (import go-overlay)
     ];
   in {
     devShells =
@@ -90,6 +95,16 @@
               };
             };
             #: }}}
+
+            #: Golang {{{
+            blackbox.languages.go = {
+              enable = false;
+              version = "latest";
+              #: gopls, delve, golangci-lint, gotools
+              installTools = false;
+            };
+            #: }}}
+
             #: }}}
 
             #: Libraries {{{

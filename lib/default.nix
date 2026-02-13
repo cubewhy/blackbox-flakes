@@ -53,4 +53,16 @@ in {
       }
       // bbConfig.env
     );
+
+  addToGitExclude = pattern: ''
+    if [ -d .git ]; then
+      exclude_file=".git/info/exclude"
+      mkdir -p .git/info
+      touch "$exclude_file"
+
+      if ! grep -qF "${pattern}" "$exclude_file"; then
+        echo "${pattern}" >> "$exclude_file"
+      fi
+    fi
+  '';
 }

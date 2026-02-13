@@ -5,6 +5,7 @@
     ./languages/rust.nix
     ./languages/javascript.nix
     ./languages/java.nix
+    ./languages/go.nix
 
     # Libraries
     ./libraries/openssl.nix
