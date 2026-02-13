@@ -57,7 +57,18 @@
 
             #: Libraries {{{
             blackbox.libraries = {
+              #: OpenSSL {{{
               openssl.enable = false;
+              #: }}}
+
+              #: Cuda: {{{
+              cuda = {
+                enable = false;
+                version = "13"; # [11, 12, 13]
+                # Enable this to install nvidia_x11 package
+                withDrivers = true;
+              };
+              #: }}}
             };
             #: }}}
           };

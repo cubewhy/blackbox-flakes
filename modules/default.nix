@@ -6,5 +6,6 @@
 
     # Libraries
     ./libraries/openssl.nix
+    ./libraries/cuda.nix
   ];
 }
