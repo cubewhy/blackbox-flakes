@@ -157,14 +157,6 @@
               openssl.enable = false;
               #: openssl end }}}
 
-              #: Wayland {{{
-              wayland = {
-                enable = false;
-
-                extraLibs = [];
-              };
-              #: wayland end }}}
-
               #: Cuda: {{{
               #: See https://nixos-cuda.org/ for enabling nix cuda cache
               cuda = {
