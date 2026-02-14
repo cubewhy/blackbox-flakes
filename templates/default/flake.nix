@@ -97,7 +97,16 @@
 
             #: Assembly {{{
             #: Enable this option will install nasm
-            blackbox.languages.assembly.enable = false;
+            blackbox.languages.assembly = {
+              enable = false;
+              package = pkgs.nasm;
+
+              #: If you need a linker, please enable this option
+              linker = {
+                enable = true;
+                package = pkgs.gcc; #: gcc provides ld
+              };
+            };
             #: asm end }}}
 
             #: Javascript/Typescript {{{
