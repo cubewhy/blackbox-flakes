@@ -95,6 +95,11 @@
             };
             #: c/cpp end }}}
 
+            #: Assembly {{{
+            #: Enable this option will install nasm
+            blackbox.languages.assembly.enable = false;
+            #: asm end }}}
+
             #: Javascript/Typescript {{{
             #: tags: javascript, typescript, js, ts, nodejs, npm, pnpm, yarn
             blackbox.languages.javascript = {

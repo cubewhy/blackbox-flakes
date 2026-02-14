@@ -3,6 +3,7 @@
     ./core/libraries.nix
 
     # Languages
+    ./languages/assembly.nix
     ./languages/c.nix
     ./languages/rust.nix
     ./languages/javascript.nix
