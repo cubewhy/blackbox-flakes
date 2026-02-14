@@ -157,6 +157,14 @@
               openssl.enable = false;
               #: openssl end }}}
 
+              #: Wayland {{{
+              wayland = {
+                enable = false;
+
+                extraLibs = [];
+              };
+              #: wayland end }}}
+
               #: Cuda: {{{
               #: See https://nixos-cuda.org/ for enabling nix cuda cache
               cuda = {
@@ -165,7 +173,22 @@
                 version = "13";
               };
               #: cuda end }}}
+
+              #: Graphics libs (X11, wayland, opengl, vulkan, nvidia) {{{
+              #: Note: this feature doesn't contains cuda, if you need cuda, please enable blackbox.libraries.cuda.enable
+              graphics.enable = false;
+              #:}}}
+
+              #: shared libraries {{{
+              #: blackbox-flake will config LD_LIBRARY_PATH and LIBRARY_PATH for the following packages
+              shared = with pkgs; [
+                # alsa-lib
+                # pipewire
+                # libpulseaudio
+              ];
+              #: }}}
             };
+
             #: libraries end }}}
 
             #: Tools {{{

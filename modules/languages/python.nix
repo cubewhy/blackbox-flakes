@@ -45,13 +45,13 @@ in {
       ++ optionals (cfg.manager == "uv") [pkgs.uv]
       ++ optionals (cfg.manager == "poetry") [pkgs.poetry];
 
-    blackbox.env = {
-      LD_LIBRARY_PATH = "${lib.makeLibraryPath [
-        pkgs.stdenv.cc.cc.lib
-        pkgs.zlib
-        pkgs.glib
-      ]}:$LD_LIBRARY_PATH";
+    blackbox.libraries.shared = [
+      pkgs.stdenv.cc.cc.lib
+      pkgs.zlib
+      pkgs.glib
+    ];
 
+    blackbox.env = {
       PYTHONUNBUFFERED = "1";
 
       VIRTUAL_ENV = "$PWD/${venvPath}";

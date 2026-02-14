@@ -1,5 +1,7 @@
 {...}: {
   imports = [
+    ./core/libraries.nix
+
     # Languages
     ./languages/c.nix
     ./languages/rust.nix
@@ -11,6 +13,7 @@
     # Libraries
     ./libraries/openssl.nix
     ./libraries/cuda.nix
+    ./libraries/graphics.nix
 
     # Tools
     ./tools/pre-commit.nix

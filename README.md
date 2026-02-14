@@ -32,6 +32,7 @@ Please see the comments in the [default template](./templates/default/flake.nix)
 | Language | Python                |                                            |
 | Library  | openssl               |                                            |
 | Library  | cuda                  | need systemwide nvidia driver installation |
+| Library  | graphics              | include X11, wayland, opengl, vulkan       |
 | Tool     | pre-commit            |                                            |
 
 ## Why this exist
