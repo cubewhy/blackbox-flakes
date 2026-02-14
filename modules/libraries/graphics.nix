@@ -8,11 +8,11 @@ with lib; let
   cfg = config.blackbox.libraries.graphics;
 
   graphicsLibs = with pkgs; [
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libXrandr
-    xorg.libXi
-    xorg.libxcb
+    libX11
+    libXcursor
+    libXrandr
+    libXi
+    libxcb
     libxkbcommon
     wayland
     libGL
