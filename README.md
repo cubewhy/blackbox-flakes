@@ -26,7 +26,7 @@ Please see the comments in the [default template](./templates/default/flake.nix)
 | -------- | --------------------- | ------------------------------------------ |
 | Language | Rust                  | need rust-overlay                          |
 | Language | C/C++                 |                                            |
-| Language | Assembly              | with nasm assembler                        |
+| Language | Assembly              | default: nasm assembler + gcc linker       |
 | Language | Golang                | need go-overlay                            |
 | Language | Java                  |                                            |
 | Language | Javascript/Typescript |                                            |
