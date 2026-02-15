@@ -111,6 +111,10 @@ in {
 
           CFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
           CXXFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
+          # TODO: add rustflags for other windows targets
+          CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS = ''
+            -L native=${mingwPthreads}/lib
+          '';
         }
       ];
     })
