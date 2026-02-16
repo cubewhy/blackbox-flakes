@@ -40,6 +40,7 @@ with lib; let
       pkgs.rustc;
 
   mingwPkgs = pkgs.pkgsCross.mingwW64;
+  mingw32Pkgs = pkgs.pkgsCross.mingw32;
   mingwPthreads = mingwPkgs.windows.pthreads;
 in {
   options.blackbox.languages.rust = {
@@ -108,11 +109,16 @@ in {
       blackbox.env = mkMerge [
         {
           CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER = "${mingwPkgs.stdenv.cc}/bin/x86_64-w64-mingw32-gcc";
+          CARGO_TARGET_I686_PC_WINDOWS_GNU_LINKER = "${mingw32Pkgs.stdenv.cc}/bin/i686-w64-mingw32-gcc";
 
           CFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
           CXXFLAGS_x86_64_pc_windows_gnu = "-I${mingwPthreads}/include";
           # TODO: add rustflags for other windows targets
           CARGO_TARGET_X86_64_PC_WINDOWS_GNU_RUSTFLAGS = ''
+            -L native=${mingwPthreads}/lib
+          '';
+
+          CARGO_TARGET_I686_PC_WINDOWS_GNU_RUSTFLAGS = ''
             -L native=${mingwPthreads}/lib
           '';
         }
