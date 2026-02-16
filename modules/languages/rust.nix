@@ -118,12 +118,9 @@ in {
             -L native=${mingwPthreads}/lib
           '';
 
-          CARGO_TARGET_I686_PC_WINDOWS_GNU_RUSTFLAGS = [
-            "-L"
-            "${mingw32Pkgs.stdenv.cc.cc}/lib/gcc/i686-w64-mingw32/${mingw32Pkgs.stdenv.cc.version}"
-            "-L"
-            "${mingw32Pkgs.windows.pthreads}/lib"
-          ];
+          CARGO_TARGET_I686_PC_WINDOWS_GNU_RUSTFLAGS = ''
+            -L native=${mingw32Pkgs.windows.pthreads}/lib
+          '';
         }
       ];
     })
