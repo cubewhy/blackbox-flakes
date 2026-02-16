@@ -122,7 +122,9 @@ in {
             "-L"
             "${mingw32Pkgs.stdenv.cc.cc}/lib/gcc/i686-w64-mingw32/${mingw32Pkgs.stdenv.cc.version}"
             "-L"
-            "${mingw32Pkgs.windows.pthreads}/lib"
+            "${mingw32Pkgs.windows.mcfgthread}/lib"
+            "-l"
+            "mcfgthread"
           ];
         }
       ];
